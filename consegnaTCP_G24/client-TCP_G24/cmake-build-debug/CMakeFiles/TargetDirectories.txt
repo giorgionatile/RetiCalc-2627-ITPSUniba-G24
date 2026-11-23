@@ -1,0 +1,3 @@
+C:/Users/giorg/OneDrive/Desktop/UniBa/2_anno/RetiDiCalcolatori/RetiCalc-2627-ITPSUniba-G24/consegnaTCP_G24/client-TCP_G24/cmake-build-debug/CMakeFiles/client_TCP_G24.dir
+C:/Users/giorg/OneDrive/Desktop/UniBa/2_anno/RetiDiCalcolatori/RetiCalc-2627-ITPSUniba-G24/consegnaTCP_G24/client-TCP_G24/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/giorg/OneDrive/Desktop/UniBa/2_anno/RetiDiCalcolatori/RetiCalc-2627-ITPSUniba-G24/consegnaTCP_G24/client-TCP_G24/cmake-build-debug/CMakeFiles/rebuild_cache.dir
