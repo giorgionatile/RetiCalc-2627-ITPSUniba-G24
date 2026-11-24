@@ -12,9 +12,8 @@
 #include <string.h>
 #include <ctype.h>
 
-// da rivedere
-#define PROTOPORT 27015 //default protocol port number
-#define QLEN 6 //size of request queue
+#define PROTOPORT 27015 //numero di porta di default
+#define QLEN 6 //dimensione della coda delle richieste
 #define BUFFERSIZE 512
 
 void ErrorHandler(char *errorMessage){
@@ -30,14 +29,14 @@ void ClearWinSock(){
 int main(int argc, char *argv[]) {
 	int port;
 	if(argc > 1){
-		port = atoi(argv[1]); //if argument specified convert argument to binary
+		port = atoi(argv[1]);
 	}
 	else{
-		port = PROTOPORT; //use default port number
+		port = PROTOPORT;
 	}
 
 	if(port < 0){
-		printf("bad port number %s \n", argv[1]);
+		printf("numero di porta non valido %s \n", argv[1]);
 		return 0;
 	}
 
@@ -47,7 +46,7 @@ int main(int argc, char *argv[]) {
 		int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
 
 		if (iResult != 0) {
-			printf("Error at WSAStartup()\n");
+			printf("Errore in WSAStartup()\n");
 			return -1;
 		}
 	#endif
@@ -56,20 +55,19 @@ int main(int argc, char *argv[]) {
 	int SSocket;
 	SSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (SSocket < 0) {
-		ErrorHandler("socket creation failed.\n");
+		ErrorHandler("Creazione della socket fallita.\n");
 		ClearWinSock();
 		return -1;
 	}
 
 	//ASSEGNAZIONE DI UN INDIRIZZO ALLA SOCKET
 	struct sockaddr_in sad;
-	memset(&sad, 0, sizeof(sad)); //ensueres that extra bytes contain 0
+	memset(&sad, 0, sizeof(sad));
 	sad.sin_family = AF_INET;
 	sad.sin_addr.s_addr = inet_addr("127.0.0.1");
-	sad.sin_port = htons(port); /*converts values beetween the host and network byte order.
-	Specifically, htons() converts 16-bit quantities from host byte order to network byte order*/
+	sad.sin_port = htons(port);
 	if(bind(SSocket, (struct sockaddr*) &sad, sizeof(sad)) < 0){
-		ErrorHandler("bind() failed.\n");
+		ErrorHandler("bind() ha fallito.\n");
 		closesocket(SSocket);
 		ClearWinSock();
 		return -1;
@@ -77,7 +75,7 @@ int main(int argc, char *argv[]) {
 
 	//SETTAGGIO DELLA SOCKET ALL'ASCOLTO
 	if(listen(SSocket, QLEN) < 0){
-		ErrorHandler("listen() failed.\n");
+		ErrorHandler("listen() ha fallito.\n");
 		closesocket(SSocket);
 		ClearWinSock();
 		return -1;
@@ -87,44 +85,74 @@ int main(int argc, char *argv[]) {
 	struct sockaddr_in cad;
 	int clientSocket;
 	int clientLen;
-	printf("Waiting for a client to connect...");
+	printf("Aspettando la connessione di un client...");
 	while(1){
 		clientLen = sizeof(cad);
 		if((clientSocket = accept(SSocket, (struct sockaddr *) &cad, &clientLen)) < 0){
-			ErrorHandler("accept() failed.\n");
+			ErrorHandler("accept() ha fallito.\n");
 
 			// CHIUSURA DELLA CONNESSIONE
 			closesocket(SSocket);
 			ClearWinSock();
 			return 0;
 		}
-		printf("Handling client %s\n", inet_ntoa(cad.sin_addr));
+
+		//VISUALIZZAZIONE DEL MESSAGGIO DI CONNESSIONE CON IL CLIENT
+		printf("connesso con il client il cui nome IP:  %s\n", inet_ntoa(cad.sin_addr));
 
 		//INVIO DEL MESSAGGIO DI "Connessione avvenuta"
 		char* inputString = "connessione avvenuta";
 		int stringLen = strlen(inputString);
 		if (send(clientSocket, inputString, stringLen, 0) != stringLen) {
-			ErrorHandler("send() sent a different number of bytes than expected");
+			ErrorHandler("send() ha inviato un numero differente di bytes rispetto al previsto");
 		}
 
 		//RICEVE I 3 NUMERI E FA LA SOMMA
 		int num1;
-		/*
-		int bytesRcvd = recv(clientSocket, str1, BUFFERSIZE - 1, 0);
+		char str_num1[BUFFERSIZE];
+		int bytesRcvd = recv(clientSocket, str_num1, BUFFERSIZE - 1, 0);
 		if (bytesRcvd > 0) {
-		    str1[bytesRcvd] = '\0';
-		    printf("Prima stringa: %s\n", str1);
+			str_num1[bytesRcvd] = '\0';
+			num1 = atoi(str_num1);
 		}
 
-
-		//INVIO DELLA STRINGA "QUIT" AL CLIENT
-		int stringLen1 = strlen("QUIT");
-		if (send(clientSocket, "QUIT", stringLen1, 0) != stringLen1) {
-			ErrorHandler("send() sent a different number of bytes than expected");
+		int num2;
+		char str_num2[BUFFERSIZE];
+		bytesRcvd = recv(clientSocket, str_num2, BUFFERSIZE - 1, 0);
+		if (bytesRcvd > 0) {
+			str_num2[bytesRcvd] = '\0';
+			num2 = atoi(str_num2);
 		}
-*/
+
+		int num3;
+		char str_num3[BUFFERSIZE];
+		bytesRcvd = recv(clientSocket, str_num3, BUFFERSIZE - 1, 0);
+		if (bytesRcvd > 0) {
+			str_num3[bytesRcvd] = '\0';
+			num3 = atoi(str_num3);
+		}
+
+		int res = num1 + num2 + num3;
+		printf("La somma di %d + %d + %d = %d\n", num1, num2, num3, res);
+
+		//CONTROLLO SUL RISULTATO
+		if (res == 100) {
+			//INVIO DELLA STRINGA "QUIT" AL CLIENT
+			int stringLen1 = strlen("QUIT");
+			if (send(clientSocket, "QUIT", stringLen1, 0) != stringLen1) {
+				ErrorHandler("send() ha inviato un numero differente di bytes rispetto al previsto");
+			}
+		}
+		else {
+			int stringLen2 = strlen((char*)&res);
+			if (send(clientSocket, (char*)&res, stringLen2, 0) != stringLen2) {
+				ErrorHandler("send() ha inviato un numero differente di bytes rispetto al previsto");
+			}
+		}
+
 		//CHIUSURA DELLA CONNESSIONE CON IL CLIENT
 		closesocket(clientSocket);
+
 	}
 
 

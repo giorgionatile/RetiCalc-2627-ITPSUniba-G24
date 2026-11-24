@@ -32,7 +32,7 @@ int main (void){
 		int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
 
 		if (iResult != 0) {
-			printf("Error at WSAStartup()\n");
+			printf("Errore in WSAStartup()\n");
 			return -1;
 		}
 	#endif
@@ -61,8 +61,8 @@ int main (void){
 	struct sockaddr_in sad;
 	memset(&sad, 0, sizeof(sad));
 	sad.sin_family = AF_INET;
-	sad.sin_addr.s_addr = inet_addr("127.0.0.1"); //IP del server
-	sad.sin_port = htons(27015); //Server port
+	sad.sin_addr.s_addr = inet_addr(IPAddress); //IP del server
+	sad.sin_port = htons(port); //Porta del server
 
 	//CONNESSIONE AL SERVER
 	if(connect(CSocket, (struct sockaddr *)&sad, sizeof(sad)) < 0){
@@ -74,31 +74,77 @@ int main (void){
 
 	//RICEZIONE DELLA STRINGA "Connessione avvenuta" DAL SERVER
 	int bytesRcvd;
-	//int totalBytesRcvd = 0;
 	char buf[BUFFERSIZE];
-	printf("Received: ");
+	printf("Ricevuto: ");
 
-	//while(totalBytesRcvd < stringLen){
 	if((bytesRcvd = recv(CSocket, buf, BUFFERSIZE - 1, 0)) <= 0){
-		ErrorHandler("recv() failed or connection closed prematurely");
+		ErrorHandler("recv() ha fallito o connessione chiusa permanentemente");
 		closesocket(CSocket);
 		ClearWinSock();
 		return -1;
 	}
-	//totalBytesRcvd += bytesRcvd; //Keep tally of total bytes
-	buf[bytesRcvd] = '\0'; //Add \0 so printf knows where to stop
-	printf("%s", buf); //Print the echo buffer
-	//}
 
-	//LETTURA DA TASTIERA DI 3 INTERI E INVIO AL SERVER
+	buf[bytesRcvd] = '\0';
+	printf("%s", buf);
 
-	//RICEZIONE DELLA STRINGA DAL SERVER E VISUALIZZAZIONE
+	int repeat = 0;
+	do {
+		//LETTURA DA TASTIERA DI 3 INTERI E INVIO AL SERVER
+		int num1, num2, num3;
+		printf("Inserisci il 1 numero: ");
+		scanf("%d", &num1);
+		printf("Inserisci il 2 numero: ");
+		scanf("%d", &num2);
+		printf("Inserisci il 3 numero: ");
+		scanf("%d", &num3);
 
-	//CHIUSURA DELLA CONNESSIONE (se la stringa corrisponde a QUIT)
+		if(send(CSocket, (char*)&num1, sizeof(num1), 0) != sizeof(num1)){
+			ErrorHandler("send() ha inviato un numero differente di bytes rispetto al previsto");
+			closesocket(CSocket);
+			ClearWinSock();
+			return -1;
+		}
+		if(send(CSocket, (char*)&num2, sizeof(num2), 0) != sizeof(num2)){
+			ErrorHandler("send() ha inviato un numero differente di bytes rispetto al previsto");
+			closesocket(CSocket);
+			ClearWinSock();
+			return -1;
+		}
+		if(send(CSocket, (char*)&num3, sizeof(num3), 0) != sizeof(num3)){
+			ErrorHandler("send() ha inviato un numero differente di bytes rispetto al previsto");
+			closesocket(CSocket);
+			ClearWinSock();
+			return -1;
+		}
+
+
+		//RICEZIONE DELLA STRINGA DAL SERVER E VISUALIZZAZIONE
+		if((bytesRcvd = recv(CSocket, buf, BUFFERSIZE - 1, 0)) <= 0){
+			ErrorHandler("recv() ha fallito o connessione chiusa permanentemente");
+			closesocket(CSocket);
+			ClearWinSock();
+			return -1;
+		}
+		buf[bytesRcvd] = '\0';
+		printf("%s", buf);
+
+		//CONTROLLO DELLA STRINGA
+		if (strcmp(buf, "QUIT")==0) {
+			repeat = 0;
+		}
+		else {
+			printf("%s", buf);
+			repeat = 1;
+		}
+	}while (repeat==1);
+
+	//CHIUSURA DELLA CONNESSIONE
 	printf("\nChiusura della connessione in corso...\n");
 	closesocket(CSocket);
 	ClearWinSock();
 	printf("\n");
 	system("pause");
 	return(0);
+
+
 }
