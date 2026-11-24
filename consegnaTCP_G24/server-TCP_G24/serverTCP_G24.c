@@ -152,8 +152,5 @@ int main(int argc, char *argv[]) {
 
 		//CHIUSURA DELLA CONNESSIONE CON IL CLIENT
 		closesocket(clientSocket);
-
 	}
-
-
 }
