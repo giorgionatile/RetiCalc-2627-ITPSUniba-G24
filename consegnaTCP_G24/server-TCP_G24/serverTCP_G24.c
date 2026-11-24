@@ -98,10 +98,10 @@ int main(int argc, char *argv[]) {
 		}
 
 		//VISUALIZZAZIONE DEL MESSAGGIO DI CONNESSIONE CON IL CLIENT
-		printf("connesso con il client il cui nome IP:  %s\n", inet_ntoa(cad.sin_addr));
+		printf("\nConnesso con il client il cui nome IP:  %s\n", inet_ntoa(cad.sin_addr));
 
 		//INVIO DEL MESSAGGIO DI "Connessione avvenuta"
-		char* inputString = "connessione avvenuta";
+		char* inputString = "Connessione avvenuta";
 		int stringLen = strlen(inputString);
 		if (send(clientSocket, inputString, stringLen, 0) != stringLen) {
 			ErrorHandler("send() ha inviato un numero differente di bytes rispetto al previsto");
