@@ -75,7 +75,6 @@ int main (void){
 	//RICEZIONE DELLA STRINGA "Connessione avvenuta" DAL SERVER
 	int bytesRcvd;
 	char buf[BUFFERSIZE];
-	printf("Ricevuto: ");
 
 	if((bytesRcvd = recv(CSocket, buf, BUFFERSIZE - 1, 0)) <= 0){
 		ErrorHandler("recv() ha fallito o connessione chiusa permanentemente");
@@ -85,7 +84,7 @@ int main (void){
 	}
 
 	buf[bytesRcvd] = '\0';
-	printf("%s", buf);
+	printf("%s\n", buf);
 
 	int repeat = 0;
 	do {
@@ -126,14 +125,14 @@ int main (void){
 			return -1;
 		}
 		buf[bytesRcvd] = '\0';
-		printf("%s", buf);
+		printf("%s\n", buf);
 
 		//CONTROLLO DELLA STRINGA
 		if (strcmp(buf, "QUIT")==0) {
 			repeat = 0;
 		}
 		else {
-			printf("%s", buf);
+			printf("%s\n", buf);
 			repeat = 1;
 		}
 	}while (repeat==1);

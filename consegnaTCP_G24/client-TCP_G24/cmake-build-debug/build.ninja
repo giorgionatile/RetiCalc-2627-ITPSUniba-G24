@@ -68,7 +68,7 @@ build CMakeFiles/client_TCP_G24.dir/clientTCP_G24.c.obj: C_COMPILER__client_TCP_
 build client_TCP_G24.exe: C_EXECUTABLE_LINKER__client_TCP_G24_Debug CMakeFiles/client_TCP_G24.dir/clientTCP_G24.c.obj
   CONFIG = Debug
   FLAGS = -g
-  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  LINK_LIBRARIES = -lws2_32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\client_TCP_G24.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
