@@ -4,3 +4,7 @@ project(client_TCP_G24 C)
 set(CMAKE_C_STANDARD 11)
 
 add_executable(client_TCP_G24 clientTCP_G24.c)
+
+if(WIN32)
+    target_link_libraries(client_TCP_G24 PRIVATE ws2_32)
+endif()
