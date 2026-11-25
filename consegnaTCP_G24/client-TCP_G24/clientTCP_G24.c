@@ -109,7 +109,6 @@ int main (void){
 			return -1;
 		}
 
-
 		//RICEZIONE DELLA STRINGA DAL SERVER E VISUALIZZAZIONE
 		if((bytesRcvd = recv(CSocket, buf, BUFFERSIZE - 1, 0)) <= 0){
 			ErrorHandler("recv() ha fallito o connessione chiusa permanentemente");
