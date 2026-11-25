@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
+#include <stdint.h>
 
 #define PROTOPORT 27015 //numero di porta di default
 #define QLEN 6 //dimensione della coda delle richieste
@@ -107,46 +107,49 @@ int main(int argc, char *argv[]) {
 			ErrorHandler("send() ha inviato un numero differente di bytes rispetto al previsto");
 		}
 
-		//RICEVE I 3 NUMERI E FA LA SOMMA
-		int num1;
-		char str_num1[BUFFERSIZE];
-		int bytesRcvd = recv(clientSocket, str_num1, BUFFERSIZE - 1, 0);
-		if (bytesRcvd > 0) {
-			str_num1[bytesRcvd] = '\0';
-			num1 = atoi(str_num1);
-		}
+		//RICEZIONE DEI 3 NUMERI E CALCOLO DELL'OPERAZIONE res = n1 + n2 - n3
+		while (1) {
+			int32_t dati[3];
+			int totaleRicevuto = 0;
+			char *ptr = (char*)dati;
 
-		int num2;
-		char str_num2[BUFFERSIZE];
-		bytesRcvd = recv(clientSocket, str_num2, BUFFERSIZE - 1, 0);
-		if (bytesRcvd > 0) {
-			str_num2[bytesRcvd] = '\0';
-			num2 = atoi(str_num2);
-		}
-
-		int num3;
-		char str_num3[BUFFERSIZE];
-		bytesRcvd = recv(clientSocket, str_num3, BUFFERSIZE - 1, 0);
-		if (bytesRcvd > 0) {
-			str_num3[bytesRcvd] = '\0';
-			num3 = atoi(str_num3);
-		}
-
-		int res = num1 + num2 + num3;
-		printf("La somma di %d + %d + %d = %d\n", num1, num2, num3, res);
-
-		//CONTROLLO SUL RISULTATO
-		if (res == 100) {
-			//INVIO DELLA STRINGA "QUIT" AL CLIENT
-			int stringLen1 = strlen("QUIT");
-			if (send(clientSocket, "QUIT", stringLen1, 0) != stringLen1) {
-				ErrorHandler("send() ha inviato un numero differente di bytes rispetto al previsto");
+			while (totaleRicevuto < (int)sizeof(dati)) {
+				int bytesRcvd = recv(clientSocket, ptr + totaleRicevuto, (int)sizeof(dati) - totaleRicevuto, 0);
+				if (bytesRcvd <= 0) {
+					break;
+				}
+				totaleRicevuto += bytesRcvd;
 			}
-		}
-		else {
-			int stringLen2 = strlen((char*)&res);
-			if (send(clientSocket, (char*)&res, stringLen2, 0) != stringLen2) {
-				ErrorHandler("send() ha inviato un numero differente di bytes rispetto al previsto");
+
+			if (totaleRicevuto < (int)sizeof(dati)) {
+				break;
+			}
+
+			int num1 = ntohl(dati[0]);
+			int num2 = ntohl(dati[1]);
+			int num3 = ntohl(dati[2]);
+
+			int res = num1 + num2 - num3;
+			printf("Operazione: %d + %d - %d = %d\n", num1, num2, num3, res);
+
+			//CONTROLLO SUL RISULTATO
+			if (res == 100) {
+				//INVIO DELLA STRINGA "QUIT" AL CLIENT
+				int stringLen1 = strlen("QUIT");
+				if (send(clientSocket, "QUIT", stringLen1, 0) != stringLen1) {
+					ErrorHandler("send() ha inviato un numero differente di bytes rispetto al previsto");
+				}
+
+				break;
+			}
+			else {
+				char str_res[BUFFERSIZE];
+				snprintf(str_res, sizeof(str_res), "%d", res);
+
+				int stringLen2 = (int)strlen(str_res);
+				if (send(clientSocket, str_res, stringLen2, 0) != stringLen2) {
+					ErrorHandler("send() ha inviato un numero differente di bytes rispetto al previsto");
+				}
 			}
 		}
 

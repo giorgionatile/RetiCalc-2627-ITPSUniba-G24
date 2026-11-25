@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #define BUFFERSIZE 512
 // #define PROTOPORT 5193 //Numero di porta di default
@@ -27,7 +28,6 @@ void ClearWinSock(){
 
 int main (void){
 	#if defined (_WIN32)
-		// Initialize Winsock
 		WSADATA wsaData;
 		int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
 
@@ -97,19 +97,12 @@ int main (void){
 		printf("Inserisci il 3 numero: ");
 		scanf("%d", &num3);
 
-		if(send(CSocket, (char*)&num1, sizeof(num1), 0) != sizeof(num1)){
-			ErrorHandler("send() ha inviato un numero differente di bytes rispetto al previsto");
-			closesocket(CSocket);
-			ClearWinSock();
-			return -1;
-		}
-		if(send(CSocket, (char*)&num2, sizeof(num2), 0) != sizeof(num2)){
-			ErrorHandler("send() ha inviato un numero differente di bytes rispetto al previsto");
-			closesocket(CSocket);
-			ClearWinSock();
-			return -1;
-		}
-		if(send(CSocket, (char*)&num3, sizeof(num3), 0) != sizeof(num3)){
+		int32_t dati[3];
+		dati[0] = htonl(num1);
+		dati[1] = htonl(num2);
+		dati[2] = htonl(num3);
+
+		if (send(CSocket, (char*)dati, sizeof(dati), 0) != (int)sizeof(dati)) {
 			ErrorHandler("send() ha inviato un numero differente di bytes rispetto al previsto");
 			closesocket(CSocket);
 			ClearWinSock();
@@ -132,7 +125,6 @@ int main (void){
 			repeat = 0;
 		}
 		else {
-			printf("%s\n", buf);
 			repeat = 1;
 		}
 	}while (repeat==1);
