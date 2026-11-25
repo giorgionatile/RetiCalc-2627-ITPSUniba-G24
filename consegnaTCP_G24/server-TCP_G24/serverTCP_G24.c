@@ -1,3 +1,4 @@
+//librerie di rete per garantire la portabilità
 #if defined (_WIN32)
 	#include <winsock2.h>
 #else
@@ -10,16 +11,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
+#include <stdint.h> //per usare interi a dimensione fissa (int32_t)
 
 #define PROTOPORT 27015 //numero di porta di default
 #define QLEN 6 //dimensione della coda delle richieste
-#define BUFFERSIZE 512
+#define BUFFERSIZE 512 //dimensione massima del buffer per le stringhe
 
+//Funzione per stampare i messaggi di errore
 void ErrorHandler(char *errorMessage){
 	printf("%s", errorMessage);
 }
 
+//Funzione per liberare le risorse della libreria winsock su windows
 void ClearWinSock(){
 	#if defined (_WIN32)
 		WSACleanup();
