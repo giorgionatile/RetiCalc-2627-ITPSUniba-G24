@@ -30,7 +30,10 @@ void ClearWinSock(){
 }
 
 int main(int argc, char *argv[]) {
+	int port = PROTOPORT;
+	/*
 	int port;
+
 	if(argc > 1){
 		port = atoi(argv[1]);
 	}
@@ -42,9 +45,9 @@ int main(int argc, char *argv[]) {
 		printf("numero di porta non valido %s \n", argv[1]);
 		return 0;
 	}
-
+	*/
+	//inizializzazionr della libreria winsock (solo windows)
 	#if defined (_WIN32)
-		// Initialize Winsock
 		WSADATA wsaData;
 		int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
 
@@ -84,11 +87,13 @@ int main(int argc, char *argv[]) {
 		return -1;
 	}
 
-	//ACCETTARE UNA NUOVA CONNESSIONE
+	//ACCETTAZIONE DI UNA NUOVA CONNESSIONE
 	struct sockaddr_in cad;
 	int clientSocket;
 	int clientLen;
 	printf("Aspettando la connessione di un client...");
+
+	//ciclo infinito del server per servire piu client in sequenza
 	while(1){
 		clientLen = sizeof(cad);
 		if((clientSocket = accept(SSocket, (struct sockaddr *) &cad, &clientLen)) < 0){
