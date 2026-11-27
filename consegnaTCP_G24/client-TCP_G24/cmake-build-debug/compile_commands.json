@@ -1,8 +1,0 @@
-[
-{
-  "directory": "C:/Users/giorg/OneDrive/Desktop/UniBa/2_anno/RetiDiCalcolatori/RetiCalc-2627-ITPSUniba-G24/consegnaTCP_G24/client-TCP_G24/cmake-build-debug",
-  "command": "C:\\PROGRA~1\\JETBRA~1\\CLION2~1.1\\bin\\mingw\\bin\\gcc.exe -g -std=gnu11 -fdiagnostics-color=always -o CMakeFiles\\client_TCP_G24.dir\\client-TCP_G24.c.obj -c C:\\Users\\giorg\\OneDrive\\Desktop\\UniBa\\2_anno\\RetiDiCalcolatori\\RetiCalc-2627-ITPSUniba-G24\\consegnaTCP_G24\\client-TCP_G24\\client-TCP_G24.c",
-  "file": "C:/Users/giorg/OneDrive/Desktop/UniBa/2_anno/RetiDiCalcolatori/RetiCalc-2627-ITPSUniba-G24/consegnaTCP_G24/client-TCP_G24/client-TCP_G24.c",
-  "output": "C:/Users/giorg/OneDrive/Desktop/UniBa/2_anno/RetiDiCalcolatori/RetiCalc-2627-ITPSUniba-G24/consegnaTCP_G24/client-TCP_G24/cmake-build-debug/CMakeFiles/client_TCP_G24.dir/client-TCP_G24.c.obj"
-}
-]
