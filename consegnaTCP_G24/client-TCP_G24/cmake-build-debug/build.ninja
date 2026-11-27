@@ -49,9 +49,9 @@ cmake_ninja_workdir = C$:/Users/giorg/OneDrive/Desktop/UniBa/2_anno/RetiDiCalcol
 
 build cmake_object_order_depends_target_client_TCP_G24: phony || .
 
-build CMakeFiles/client_TCP_G24.dir/clientTCP_G24.c.obj: C_COMPILER__client_TCP_G24_unscanned_Debug C$:/Users/giorg/OneDrive/Desktop/UniBa/2_anno/RetiDiCalcolatori/RetiCalc-2627-ITPSUniba-G24/consegnaTCP_G24/client-TCP_G24/clientTCP_G24.c || cmake_object_order_depends_target_client_TCP_G24
+build CMakeFiles/client_TCP_G24.dir/client-TCP_G24.c.obj: C_COMPILER__client_TCP_G24_unscanned_Debug C$:/Users/giorg/OneDrive/Desktop/UniBa/2_anno/RetiDiCalcolatori/RetiCalc-2627-ITPSUniba-G24/consegnaTCP_G24/client-TCP_G24/client-TCP_G24.c || cmake_object_order_depends_target_client_TCP_G24
   CONFIG = Debug
-  DEP_FILE = CMakeFiles\client_TCP_G24.dir\clientTCP_G24.c.obj.d
+  DEP_FILE = CMakeFiles\client_TCP_G24.dir\client-TCP_G24.c.obj.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\client_TCP_G24.dir
   OBJECT_FILE_DIR = CMakeFiles\client_TCP_G24.dir
@@ -65,7 +65,7 @@ build CMakeFiles/client_TCP_G24.dir/clientTCP_G24.c.obj: C_COMPILER__client_TCP_
 #############################################
 # Link the executable client_TCP_G24.exe
 
-build client_TCP_G24.exe: C_EXECUTABLE_LINKER__client_TCP_G24_Debug CMakeFiles/client_TCP_G24.dir/clientTCP_G24.c.obj
+build client_TCP_G24.exe: C_EXECUTABLE_LINKER__client_TCP_G24_Debug CMakeFiles/client_TCP_G24.dir/client-TCP_G24.c.obj
   CONFIG = Debug
   FLAGS = -g
   LINK_LIBRARIES = -lws2_32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32

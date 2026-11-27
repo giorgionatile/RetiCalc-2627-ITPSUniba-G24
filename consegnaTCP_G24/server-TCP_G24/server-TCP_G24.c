@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
 	//Scelta del numero di porta (tra 5000 e 65535) se no porta di dafault (27015)
 	int port;
 	do {
-		printf("Inserisci il numero di porta: ");
+		printf("Inserisci il numero di porta (0 per quello di default): ");
 		scanf("%d", &port);
 	}while(port != 0 && (port < 5000 || port > 65535));
 
