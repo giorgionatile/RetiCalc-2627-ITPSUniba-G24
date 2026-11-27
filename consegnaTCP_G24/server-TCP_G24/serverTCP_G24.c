@@ -30,23 +30,27 @@ void ClearWinSock(){
 }
 
 int main(int argc, char *argv[]) {
-	int port = PROTOPORT;
-	/*
+	char IPAddress[16] = "127.0.0.1"; //Indirizzo IP
+
+	//Scelta del numero di porta (tra 5000 e 65535) se no porta di dafault (27015)
 	int port;
+	do {
+		printf("Inserisci il numero di porta: ");
+		scanf("%d", &port);
+	}while(port != 0 && (port < 5000 || port > 65535));
 
-	if(argc > 1){
-		port = atoi(argv[1]);
-	}
-	else{
+	printf("Indirizzo IP: %s\n", IPAddress);
+	if (port == 0) {
 		port = PROTOPORT;
+		printf("Numero di porta (di default): %d\n", port);
 	}
+	else
+		printf("Numero di porta: %d\n", port);
 
-	if(port < 0){
-		printf("numero di porta non valido %s \n", argv[1]);
-		return 0;
-	}
-	*/
-	//inizializzazionr della libreria winsock (solo windows)
+
+
+
+	//inizializzazione della libreria winsock (solo windows)
 	#if defined (_WIN32)
 		WSADATA wsaData;
 		int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
@@ -57,7 +61,8 @@ int main(int argc, char *argv[]) {
 		}
 	#endif
 
-	// CREAZIONE DELLA SOCKET
+	//CREAZIONE DELLA SOCKET
+	//creazione di una socket tcp (sock_stream) su protocollo ipv4 (pf_inet)
 	int SSocket;
 	SSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (SSocket < 0) {
@@ -67,10 +72,11 @@ int main(int argc, char *argv[]) {
 	}
 
 	//ASSEGNAZIONE DI UN INDIRIZZO ALLA SOCKET
+	//azzeramento e configurazione della struttura sockaddr_in con indirizzo IP e porta
 	struct sockaddr_in sad;
 	memset(&sad, 0, sizeof(sad));
 	sad.sin_family = AF_INET;
-	sad.sin_addr.s_addr = inet_addr("127.0.0.1");
+	sad.sin_addr.s_addr = inet_addr(IPAddress);
 	sad.sin_port = htons(port);
 	if(bind(SSocket, (struct sockaddr*) &sad, sizeof(sad)) < 0){
 		ErrorHandler("bind() ha fallito.\n");
@@ -79,7 +85,7 @@ int main(int argc, char *argv[]) {
 		return -1;
 	}
 
-	//SETTAGGIO DELLA SOCKET ALL'ASCOLTO
+	//IMPOSTAZIONE DELLA SOCKET ALL'ASCOLTO
 	if(listen(SSocket, QLEN) < 0){
 		ErrorHandler("listen() ha fallito.\n");
 		closesocket(SSocket);
@@ -88,6 +94,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	//ACCETTAZIONE DI UNA NUOVA CONNESSIONE
+	//struttura per memorizzare l'indirizzo del client e descrittore della socket dedicata al singolo client
 	struct sockaddr_in cad;
 	int clientSocket;
 	int clientLen;
@@ -116,11 +123,14 @@ int main(int argc, char *argv[]) {
 		}
 
 		//RICEZIONE DEI 3 NUMERI E CALCOLO DELL'OPERAZIONE res = n1 + n2 - n3
+		//ciclo interno per gestire piu richieste consecutive dello stesso client finche non esce
 		while (1) {
+			//array di 3 interi a 32 bit per ricevere i 12 byte inviati dal client
 			int32_t dati[3];
 			int totaleRicevuto = 0;
 			char *ptr = (char*)dati;
 
+			//ciclo di lettura che garantisce la ricezione completa di tutti i 12 byte dal flusso tcp
 			while (totaleRicevuto < (int)sizeof(dati)) {
 				int bytesRcvd = recv(clientSocket, ptr + totaleRicevuto, (int)sizeof(dati) - totaleRicevuto, 0);
 				if (bytesRcvd <= 0) {
@@ -133,6 +143,7 @@ int main(int argc, char *argv[]) {
 				break;
 			}
 
+			//conversione dei tre interi dal formato di rete (network byte order) al formato dell'host
 			int num1 = ntohl(dati[0]);
 			int num2 = ntohl(dati[1]);
 			int num3 = ntohl(dati[2]);
@@ -151,6 +162,7 @@ int main(int argc, char *argv[]) {
 				break;
 			}
 			else {
+				//conversione del risultato intero in stringa testuale prima dell'invio al client
 				char str_res[BUFFERSIZE];
 				snprintf(str_res, sizeof(str_res), "%d", res);
 
