@@ -47,9 +47,6 @@ int main(int argc, char *argv[]) {
 	else
 		printf("Numero di porta: %d\n", port);
 
-
-
-
 	//inizializzazione della libreria winsock (solo windows)
 	#if defined (_WIN32)
 		WSADATA wsaData;
